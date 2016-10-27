@@ -57,7 +57,6 @@ sshfs(){
 # google-chrome installer
 install_google_chrome(){(
   which google-chrome >/dev/null 2>&1 || \
-    sudo -H apt-get -y update && \
     sudo -H apt-get -o=Dir::Cache::Archives=/media/ubuntu/casper-rw/cache install google-chrome-stable
 )}
 
