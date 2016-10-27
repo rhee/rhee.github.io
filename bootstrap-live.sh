@@ -16,7 +16,7 @@ nmcli d wifi connect KT_WLAN_9921 password $wlan_key iface wlan0
 #sudo -H add-apt-repository universe &&
 #sudo -H add-apt-repository multiverse &&
 sudo -H apt-get -y update &&
-sudo -H apt-get -y install vim-gnome exuberant-ctags git libav-tools python-pip python-virtualenv
+sudo -H apt-get -y install vim-gnome exuberant-ctags git libav-tools python-pip # python-virtualenv
 
 # fix locale
 sudo -H locale-gen ko-KR.UTF-8
@@ -37,4 +37,8 @@ n stable # fetch latest (es2015 supported) node.js
 # install default .rcfiles
 mkdir -p ~/.local/etc
 (cd ~/.local/etc; git clone https://github.com/rhee/_ishrc.git _ishrc; cd _ishrc; sh install.sh)
+
+# install vscode
+wget 'https://go.microsoft.com/fwlink/?LinkID=760868' -O vscode.deb
+sudo -H dpkg -i vscode.deb
 
