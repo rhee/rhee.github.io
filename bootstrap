@@ -30,20 +30,17 @@ fi
 ##########################################
 # user setup part
 
-export LANG=ko_KR.UTF-8
 
 # user binary path
 if [ -d /media/ubuntu/casper-rw ]
 then
-  sudo -H mkdir -p /media/ubuntu/casper-rw/data
-  sudo -H chown $USER:$USER /media/ubuntu/casper-rw/data
   HOME_LOCAL=/media/ubuntu/casper-rw/data/.local
 else
   HOME_LOCAL=$HOME/.local
 fi
 
-export HOME_LOCAL
 mkdir -p $HOME_LOCAL
+export HOME_LOCAL
 
 
 # update .bashrc
@@ -65,41 +62,41 @@ alias i='. ~/.ishrc'
 
 
 # install default .rcfiles
-test -f ~/.ishrc || git clone https://github.com/rhee/_ishrc.git /tmp/_ishrc && ( cd /tmp/_ishrc; sh install.sh )
+test -d $HOME_LOCAL/cache/_ishrc || git clone https://github.com/rhee/_ishrc.git $HOME_LOCAL/cache/_ishrc
+test -f ~/.ishrc || (cd $HOME_LOCAL/cache/_ishrc; sh install.sh)
 
-
-
-# python-pip installer
-pip(){(
-  which pip >/dev/null 2>&1 || sudo -H apt-get install python-pip
-  unset -f \pip
-  \pip "$@"
-)}
 
 # google-chrome installer
-alias google-chrome='(which google-chrome >/dev/null 2>&1 || _install_google_chrome) && unalias google-chrome && \google-chrome'
-_install_google_chrome(){(
-  wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo -H apt-key add - 
-  echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo -H tee -a /etc/apt/sources.list.d/google-chrome.list
-  sudo -H apt-get install google-chrome-stable
+install_google_chrome(){(
+  test -f $HOME_LOCAL/cache/linux_signing_key.pub || \
+    wget -q https://dl-ssl.google.com/linux/linux_signing_key.pub -O $HOME_LOCAL/cache/linux_signing_key.pub
+  sudo -H apt-key add $HOME_LOCAL/cache/linux_signing_key.pub
+  test -f /etc/apt/source.list.d/google-chrome.list || \
+    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo -H tee -a /etc/apt/sources.list.d/google-chrome.list
+  which google-chrome >/dev/null 2>&1 || \
+    sudo -H apt-get install google-chrome
 )}
 
 # microsoft-vscode installer
-code(){(
+install_code(){(
+  test -f $HOME_LOCAL/cache/vscode.deb || \
+    wget "https://go.microsoft.com/fwlink/?LinkID=760868" -O $HOME_LOCAL/cache/vscode.deb
   which code >/dev/null 2>&1 || \
-    wget "https://go.microsoft.com/fwlink/?LinkID=760868" -O /tmp/vscode.deb && \
-    sudo -H dpkg -i /tmp/vscode.deb
-  unset -f \code
-  \code "$@"
+    sudo -H dpkg -i $HOME_LOCAL/cache/vscode.deb
 )}
 
 # node-js installer ( via node-manager )
-npm(){(
+install_npm(){(
+  if [ -d /media/ubuntu/casper-rw ]
+  then
+    HOME_LOCAL=/media/ubuntu/casper-rw/data/.local
+  else
+    HOME_LOCAL=$HOME/.local
+  fi
+  test -d $HOME_LOCAL/cache/n || \
+    git clone https://github.com/rhee/n.git $HOME_LOCAL/cache/n
   which npm >/dev/null 2>&1 || \
-    git clone https://github.com/rhee/n.git /tmp/n && \
-    ( cd /tmp/n && make PREFIX=$HOME_LOCAL install; $PREFIX/bin/n lts )
-  unset -f \npm
-  \npm "$@"
+    ( cd $HOME_LOCAL/cache/n && make PREFIX=$HOME_LOCAL install; $PREFIX/bin/n lts )
 )}
 
 # sshfs
@@ -124,3 +121,5 @@ synclient TouchpadOff=1
 # remap key capslock as control
 setxkbmap -layout us -option ctrl:nocaps
 
+# ko_KR
+alias kor='export LANG=ko_KR.UTF-8'
