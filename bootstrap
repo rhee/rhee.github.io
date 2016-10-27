@@ -18,7 +18,9 @@ then
   OPT_CACHE_DIR=-o=Dir::Cache::Archives=/media/ubuntu/casper-rw/cache
 fi
 
-# enable universe repository apt get update, install extra packages
+# enable universe repository/google repository, apt get update, install extra packages
+wget -q https://dl-ssl.google.com/linux/linux_signing_key.pub -O - | sudo -H apt-key add -
+echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' | sudo -H tee -a /etc/apt/sources.list.d/google-chrome.list
 add-apt-repository universe && 
 apt-get -y update && 
 apt-get -y \$OPT_CACHE_DIR install vim exuberant-ctags git sshfs docker.io
@@ -59,13 +61,9 @@ sshfs(){
 
 # google-chrome installer
 install_google_chrome(){(
-  test -f $HOME_LOCAL/cache/linux_signing_key.pub || \
-    wget -q https://dl-ssl.google.com/linux/linux_signing_key.pub -O $HOME_LOCAL/cache/linux_signing_key.pub
-  sudo -H apt-key add $HOME_LOCAL/cache/linux_signing_key.pub
-  test -f /etc/apt/source.list.d/google-chrome.list || \
-    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo -H tee -a /etc/apt/sources.list.d/google-chrome.list
   which google-chrome >/dev/null 2>&1 || \
-    sudo -H apt-get -o=Dir::Cache::Archives=/media/ubuntu/casper-rw/cache install google-chrome
+    sudo -H apt-get -y update && \
+    sudo -H apt-get -o=Dir::Cache::Archives=/media/ubuntu/casper-rw/cache install google-chrome-stable
 )}
 
 # microsoft-vscode installer
