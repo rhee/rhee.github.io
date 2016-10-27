@@ -26,6 +26,8 @@ cat <<EEE >> ~/.bashrc
 export PATH=~/.local/bin:$PATH
 alias i='. ~/.ishrc'
 EEE
+
+#
 . ~/.bashrc
 
 # install n, select es2015-supported latest stable node.js
