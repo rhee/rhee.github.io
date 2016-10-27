@@ -79,4 +79,9 @@ _install_node_manager(){
   git clone https://github.com/rhee/n.git && ( cd ~/n && make PREFIX=~/.local install; hash -r; n stable )
 }
 
+alias sshfs=_sshfs_better
+_sshfs_better () 
+{ 
+    sshfs "$@" -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3
+}
 
