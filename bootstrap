@@ -32,7 +32,7 @@ fi
 
 
 # user binary path
-if [ -d /media/ubuntu/casper-rw ]
+if [ -d /media/ubuntu/casper-rw/data ]
 then
   HOME_LOCAL=/media/ubuntu/casper-rw/data/.local
 else
@@ -50,7 +50,11 @@ case :$PATH: in
 *)
   cat <<EEE >> ~/.bashrc
 export PATH=$HOME_LOCAL/bin:$PATH
+sshfs(){
+    \sshfs "$@" -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3
+}
 alias i='. ~/.ishrc'
+alias kor='export LANG=ko_KR.UTF-8'
 EEE
   ;;
 esac
@@ -58,12 +62,11 @@ esac
 
 # apply to this shell
 PATH=$HOME_LOCAL/bin:$PATH
-alias i='. ~/.ishrc'
 
 
 # install default .rcfiles
 test -d $HOME_LOCAL/cache/_ishrc || git clone https://github.com/rhee/_ishrc.git $HOME_LOCAL/cache/_ishrc
-test -f ~/.ishrc || (cd $HOME_LOCAL/cache/_ishrc; sh install.sh)
+test -f ~/.ishrc || (cd $HOME_LOCAL/cache/_ishrc; sh install.sh; rm -fv ~/.gitconfig; mv ~/.gitconfig- ~/.gitconfig)
 
 
 # google-chrome installer
@@ -87,7 +90,7 @@ install_code(){(
 
 # node-js installer ( via node-manager )
 install_npm(){(
-  if [ -d /media/ubuntu/casper-rw ]
+  if [ -d /media/ubuntu/casper-rw/data/.local ]
   then
     HOME_LOCAL=/media/ubuntu/casper-rw/data/.local
   else
@@ -99,18 +102,10 @@ install_npm(){(
     ( cd $HOME_LOCAL/cache/n && make PREFIX=$HOME_LOCAL install; $PREFIX/bin/n lts )
 )}
 
-# sshfs
-sshfs(){(
-    \sshfs "$@" -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3
-)}
-
 #############
 
-(
-set -x
 git config --global user.email "shr386+github@hotmail.com"
 git config --global user.name "Sang-Hoon RHEE"
-)
 
 ##########################################
 # console/terminal setup part
@@ -120,6 +115,3 @@ synclient TouchpadOff=1
 
 # remap key capslock as control
 setxkbmap -layout us -option ctrl:nocaps
-
-# ko_KR
-alias kor='export LANG=ko_KR.UTF-8'
