@@ -13,12 +13,13 @@ apt-get -y install vim-gnome exuberant-ctags git sshfs docker.io
 # fix locale
 locale-gen ko-KR.UTF-8
 update-locale
-export LANG=ko_KR.UTF-8
 
 ' # end of sudo -H sh -c
 
 ##########################################
 # user setup part
+
+export LANG=ko_KR.UTF-8
 
 # user binary path
 mkdir -p ~/.local/bin
@@ -47,7 +48,7 @@ git config --global user.name "Sang-Hoon RHEE"
 
 
 # install default .rcfiles
-git clone https://github.com/rhee/_ishrc.git && ( cd _ishrc; sh install.sh )
+git clone https://github.com/rhee/_ishrc.git /tmp/_ishrc && ( cd /tmp/_ishrc; sh install.sh )
 
 
 # python-pip installer
@@ -73,10 +74,10 @@ _install_microsoft_vscode(){
 
 
 # node-js installer ( via node-manager )
-alias node='(which node >/dev/null 2>&1 || _install_node_manager) && unalias node && node'
+alias npm='(which npm >/dev/null 2>&1 || _install_node_manager) && unalias npm && npm'
 _install_node_manager(){
-  # install n, select es2015-supported latest stable node.js
-  git clone https://github.com/rhee/n.git && ( cd ~/n && make PREFIX=~/.local install; hash -r; n stable )
+  # install n, select node-lts
+  git clone https://github.com/rhee/n.git /tmp/n && ( cd /tmp/n && make PREFIX=~/.local install; hash -r; n lts )
 }
 
 alias sshfs=_sshfs_better
