@@ -13,10 +13,13 @@ read wlan_key
 nmcli d wifi connect KT_WLAN_9921 password $wlan_key iface wlan0
 
 # enable universe repository apt get update, install extra packages
-#sudo -H add-apt-repository universe &&
+sudo -H add-apt-repository universe &&
 #sudo -H add-apt-repository multiverse &&
 sudo -H apt-get -y update &&
-sudo -H apt-get -y install vim-gnome exuberant-ctags git libav-tools python-pip # python-virtualenv
+sudo -H apt-get -y install vim-gnome exuberant-ctags git
+
+sudo -H apt-get -y -f libav-tools python-pip python-virtualenv
+
 
 # fix locale
 sudo -H locale-gen ko-KR.UTF-8
