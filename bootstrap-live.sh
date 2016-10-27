@@ -31,7 +31,7 @@ EEE
 . ~/.bashrc
 
 # install n, select es2015-supported latest stable node.js
-( git clone https://github.com/rhee/n.git && cd ~/n && make PREFIX=~/.local install && harh -r && n stable )
+( git clone https://github.com/rhee/n.git && cd ~/n && make PREFIX=~/.local install && hash -r && n stable )
 
 
 # install default .rcfiles
