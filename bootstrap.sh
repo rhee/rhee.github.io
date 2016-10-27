@@ -73,7 +73,7 @@ alias i='. ~/.ishrc'
 
 
 # install default .rcfiles
-git clone https://github.com/rhee/_ishrc.git /tmp/_ishrc && ( cd /tmp/_ishrc; sh install.sh )
+test -f ~/.ishrc || git clone https://github.com/rhee/_ishrc.git /tmp/_ishrc && ( cd /tmp/_ishrc; sh install.sh )
 
 
 
