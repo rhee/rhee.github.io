@@ -10,20 +10,15 @@ export LIVE_USER
 sudo -H sh -c "
 
 # user binary path
-if [ -d /media/ubuntu/casper-rw ]
-then
-  sudo -H mkdir -p /media/ubuntu/casper-rw/data
-  sudo -H chown $LIVE_USER:$LIVE_USER /media/ubuntu/casper-rw/data
-  mkdir -p /media/ubuntu/casper-rw/cache
-  OPT_CACHE_DIR=-o=Dir::Cache::Archives=/media/ubuntu/casper-rw/cache
-fi
+sudo -H mkdir -p /media/ubuntu/casper-rw/cache /media/ubuntu/casper-rw/data && \
+sudo -H chown -R $LIVE_USER:$LIVE_USER /media/ubuntu/casper-rw/data
 
 # enable universe repository/google repository, apt get update, install extra packages
 wget -q https://dl-ssl.google.com/linux/linux_signing_key.pub -O - | sudo -H apt-key add -
 echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' | sudo -H tee -a /etc/apt/sources.list.d/google-chrome.list
 add-apt-repository universe && 
 apt-get -y update && 
-apt-get -y \$OPT_CACHE_DIR install vim exuberant-ctags git sshfs docker.io
+apt-get -y -o=Dir::Cache::Archives=/media/ubuntu/casper-rw/cache install vim exuberant-ctags git sshfs docker.io
 
 # fix locale
 locale-gen ko-KR.UTF-8
