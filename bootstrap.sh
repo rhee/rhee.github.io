@@ -8,7 +8,7 @@ sudo -H sh -c '
 # enable universe repository apt get update, install extra packages
 add-apt-repository universe && 
 apt-get -y update && 
-apt-get -y install vim-gnome exuberant-ctags git sshfs docker
+apt-get -y install vim-gnome exuberant-ctags git sshfs docker.io
 
 # fix locale
 locale-gen ko-KR.UTF-8
