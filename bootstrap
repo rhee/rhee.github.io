@@ -10,15 +10,19 @@ export LIVE_USER
 sudo -H sh -c "
 
 # user binary path
-sudo -H mkdir -p /media/ubuntu/casper-rw/cache /media/ubuntu/casper-rw/data && \
-sudo -H chown -R $LIVE_USER:$LIVE_USER /media/ubuntu/casper-rw/data
+if [ -d /media/ubuntu/casper-rw ]
+then
+  sudo -H mkdir -p /media/ubuntu/casper-rw/data/.local/packages && \
+  sudo -H chown -R $LIVE_USER:$LIVE_USER /media/ubuntu/casper-rw/data
+  rm -f /home/$LIVE_USER/.local && ln -s -f /media/ubuntu/casper-rw/data/.local /home/$LIVE_USER/.local
+fi
 
 # enable universe repository/google repository, apt get update, install extra packages
 wget -q https://dl-ssl.google.com/linux/linux_signing_key.pub -O - | sudo -H apt-key add -
 echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' | sudo -H tee -a /etc/apt/sources.list.d/google-chrome.list
 add-apt-repository universe && 
 apt-get -y update && 
-apt-get -y -o=Dir::Cache::Archives=/media/ubuntu/casper-rw/cache install vim exuberant-ctags git sshfs docker.io
+apt-get -y -o=Dir::Cache::Archives=/home/$LIVE_USER/.local/packages install vim exuberant-ctags git sshfs docker.io
 
 # fix locale
 locale-gen ko-KR.UTF-8
@@ -30,56 +34,41 @@ update-locale
 # user setup part
 
 
-# user binary path
-if [ -d /media/ubuntu/casper-rw/data ]
-then
-  HOME_LOCAL=/media/ubuntu/casper-rw/data/.local
-else
-  HOME_LOCAL=$HOME/.local
-fi
-
-mkdir -p $HOME_LOCAL
-export HOME_LOCAL
-
 # update .bashrc
 case :$PATH: in
-*:$HOME_LOCAL/bin:*)
+*:$HOME/.local/bin:*)
   ;;
 *)
   cat <<EEE >> ~/.bashrc
-export PATH=$HOME_LOCAL/bin:$PATH
+export PATH=\$HOME/.local/bin:\$PATH
 
 # sshfs
 sshfs(){
-    \sshfs "$@" -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3
+    \sshfs "\$@" -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3
 }
 
 # google-chrome installer
 install_google_chrome(){(
   which google-chrome >/dev/null 2>&1 || \
-    sudo -H apt-get -o=Dir::Cache::Archives=/media/ubuntu/casper-rw/cache install google-chrome-stable
+    sudo -H apt-get -o=Dir::Cache::Archives=\$HOME/.local/packages install google-chrome-stable
 )}
 
 # microsoft-vscode installer
 install_code(){(
-  test -f $HOME_LOCAL/cache/vscode.deb || \
-    wget "https://go.microsoft.com/fwlink/?LinkID=760868" -O $HOME_LOCAL/cache/vscode.deb
+  test -f \$HOME/.local/cache/vscode.deb || \
+    mkdir -p \$HOME/.local/cache && \
+    wget "https://go.microsoft.com/fwlink/?LinkID=760868" -O \$HOME/.local/cache/vscode.deb
   which code >/dev/null 2>&1 || \
-    sudo -H dpkg -i $HOME_LOCAL/cache/vscode.deb
+    sudo -H dpkg -i \$HOME/.local/cache/vscode.deb
 )}
 
 # node-js installer ( via node-manager )
 install_npm(){(
-  if [ -d /media/ubuntu/casper-rw/data/.local ]
-  then
-    HOME_LOCAL=/media/ubuntu/casper-rw/data/.local
-  else
-    HOME_LOCAL=$HOME/.local
-  fi
-  test -d $HOME_LOCAL/cache/n || \
-    git clone https://github.com/rhee/n.git $HOME_LOCAL/cache/n
+  HOME_LOCAL=\$HOME/.local
+  test -d \$HOME/.local/cache/n || \
+    git clone https://github.com/rhee/n.git \$HOME/.local/cache/n
   which npm >/dev/null 2>&1 || \
-    ( cd $HOME_LOCAL/cache/n && make PREFIX=$HOME_LOCAL install; $PREFIX/bin/n lts )
+    ( cd \$HOME/.local/cache/n && make PREFIX=\$HOME/.local install; \$HOME/.local/bin/n lts )
 )}
 
 alias i='. ~/.ishrc'
@@ -90,12 +79,14 @@ esac
 
 
 # apply to this shell
-PATH=$HOME_LOCAL/bin:$PATH
+PATH=$HOME/.local/bin:$PATH
 
 
 # install default .rcfiles
-test -d $HOME_LOCAL/cache/_ishrc || git clone https://github.com/rhee/_ishrc.git $HOME_LOCAL/cache/_ishrc
-test -f ~/.ishrc || (cd $HOME_LOCAL/cache/_ishrc; sh install.sh; rm -fv ~/.gitconfig; mv ~/.gitconfig- ~/.gitconfig)
+test -d $HOME/.local/etc/_ishrc || \
+mkdir -p $HOME/.local/etc && \
+git clone https://github.com/rhee/_ishrc.git $HOME/.local/cache/_ishrc
+test -f ~/.ishrc || (cd $HOME/.local/etc/_ishrc; sh install.sh)
 
 
 #############
