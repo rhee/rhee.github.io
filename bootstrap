@@ -2,15 +2,6 @@
 # bootstrap environment for ubuntu 14.04 live usb 
 
 ##########################################
-# console/terminal setup part
-
-# disable touchpad
-synclient TouchpadOff=1
-
-# remap key capslock as control
-setxkbmap -layout us -option ctrl:nocaps
-
-##########################################
 # system setup part
 
 LIVE_USER=$USER
@@ -123,3 +114,13 @@ set -x
 git config --global user.email "shr386+github@hotmail.com"
 git config --global user.name "Sang-Hoon RHEE"
 )
+
+##########################################
+# console/terminal setup part
+
+# disable touchpad
+synclient TouchpadOff=1
+
+# remap key capslock as control
+setxkbmap -layout us -option ctrl:nocaps
+
