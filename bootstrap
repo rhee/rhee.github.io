@@ -48,7 +48,7 @@ export PATH=\$HOME/.local/bin:\$PATH
 
 # sshfs
 sshfs(){
-    \sshfs "\$@" -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3
+    env sshfs "\$@" -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3
 }
 
 # google-chrome installer
