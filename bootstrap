@@ -28,6 +28,10 @@ apt-get -y -o=Dir::Cache::Archives=/home/$LIVE_USER/.local/packages install vim 
 locale-gen ko-KR.UTF-8
 update-locale
 
+# fix keymap
+sed -e 's/^XKBOPTIONS=\"\"/XKBOPTIONS=\"ctrl:nocaps\"/' < /etc/default/keyboard > /tmp/_keyboard && \
+mv /tmp/_keyboard /etc/default/keyboard
+
 " # end of sudo -H sh -c
 
 ##########################################
